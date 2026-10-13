@@ -18,12 +18,9 @@
   <div class="container header-inner">
     <a href="index.html" class="brand" aria-label="Leizel Abana home">
       <svg class="brand-mark" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M6 6H13.5V27H24V33H6V6Z" fill="var(--green)"/>
-        <rect x="21" y="10" width="14" height="10" rx="2" stroke="var(--charcoal)" stroke-width="2"/>
-        <path d="M25 27L21 33H31L27 27" stroke="var(--charcoal)" stroke-width="2" stroke-linejoin="round"/>
-        <path d="M24.2 12.5L22.5 15L24.2 17.5" stroke="var(--charcoal)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M28.5 12L27 17.5" stroke="var(--charcoal)" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M31.8 12.5L33.5 15L31.8 17.5" stroke="var(--charcoal)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect width="40" height="40" rx="11" fill="var(--green)"/>
+        <path d="M14.5 11V28.5H27.5" stroke="var(--cream-soft)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="27.5" cy="14" r="3.2" fill="var(--tan)"/>
       </svg>
       <span class="brand-text">
         <span class="brand-name">Leizel Abana</span>
@@ -72,12 +69,9 @@
 
         <div class="hero-logo-circle">
           <svg width="76" height="76" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M6 6H13.5V27H24V33H6V6Z" fill="var(--green)"/>
-            <rect x="21" y="10" width="14" height="10" rx="2" stroke="var(--charcoal)" stroke-width="2"/>
-            <path d="M25 27L21 33H31L27 27" stroke="var(--charcoal)" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M24.2 12.5L22.5 15L24.2 17.5" stroke="var(--charcoal)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M28.5 12L27 17.5" stroke="var(--charcoal)" stroke-width="1.6" stroke-linecap="round"/>
-            <path d="M31.8 12.5L33.5 15L31.8 17.5" stroke="var(--charcoal)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect width="40" height="40" rx="11" fill="var(--green)"/>
+            <path d="M14.5 11V28.5H27.5" stroke="var(--cream-soft)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="27.5" cy="14" r="3.2" fill="var(--tan)"/>
           </svg>
           <p class="hero-logo-name">LEIZEL ABANA</p>
           <p class="hero-logo-role">WEB DESIGNER &amp; DEVELOPER</p>
@@ -108,7 +102,8 @@
 
   <svg class="squiggle squiggle-1" width="240" height="280" viewBox="0 0 180 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path d="M170 10C170 10 120 20 140 60C160 100 60 90 60 130C60 170 150 160 130 210" stroke="var(--green)" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="170" cy="10" r="16" stroke="var(--green)" stroke-width="3" fill="none"/>
+    <circle cx="170" cy="10" r="16" stroke="var(--green)" stroke-width="3" fill="var(--cream)"/>
+    <circle cx="130" cy="210" r="4.5" fill="var(--green)"/>
   </svg>
 </section>
 
@@ -196,10 +191,84 @@
 
 <!-- ================= FOOTER ================= -->
 <footer class="site-footer">
-  <div class="container footer-inner">
-    <p>&copy; <span id="year"></span> Leizel Abana. All rights reserved.</p>
-    <a href="#top" class="back-to-top">Back to top &uarr;</a>
+  <svg class="footer-wave" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40C180 70 360 70 540 48C720 26 900 4 1080 14C1260 24 1350 46 1440 40V70H0Z" fill="var(--charcoal)"/>
+  </svg>
+  <div class="footer-glow" aria-hidden="true"></div>
+
+  <div class="floaties footer-floaties" aria-hidden="true">
+    <span class="floaty ring-shape" style="top:52%; left:2%; animation-duration:10s; animation-delay:.4s;"></span>
+    <span class="floaty dot-shape tan" style="top:58%; right:1.5%; animation-duration:6.4s; animation-delay:.8s;"></span>
+    <span class="floaty plus-shape green" style="bottom:3%; right:4%; animation-duration:7.6s; animation-delay:1.2s;">+</span>
+    <span class="floaty plus-shape" style="bottom:4%; left:3%; animation-duration:7s;">+</span>
   </div>
+
+  <a href="index.html#contact" class="footer-sticker" aria-label="Let's work together">
+    <svg class="sticker-text" viewBox="0 0 120 120" aria-hidden="true">
+      <defs><path id="sticker-circle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs>
+      <text textLength="272" lengthAdjust="spacing"><textPath href="#sticker-circle" textLength="272" lengthAdjust="spacing">LET'S WORK TOGETHER ✦ LET'S WORK TOGETHER ✦</textPath></text>
+    </svg>
+    <span class="sticker-arrow" aria-hidden="true">&#8599;</span>
+  </a>
+
+  <div class="footer-ribbons" aria-hidden="true">
+    <div class="ribbon ribbon-back"><div class="ribbon-track"><span>Web Design</span><i>✦</i><span>Web Development</span><i>✦</i><span>SEO/GEO</span><i>✦</i><span>AI Automations</span><i>✦</i><span>WordPress</span><i>✦</i><span>Shopify</span><i>✦</i><span>Webflow</span><i>✦</i><span>HubSpot</span><i>✦</i><span>Web Design</span><i>✦</i><span>Web Development</span><i>✦</i><span>SEO/GEO</span><i>✦</i><span>AI Automations</span><i>✦</i><span>WordPress</span><i>✦</i><span>Shopify</span><i>✦</i><span>Webflow</span><i>✦</i><span>HubSpot</span><i>✦</i></div></div>
+    <div class="ribbon ribbon-front"><div class="ribbon-track"><span>Web Design</span><i>✦</i><span>Web Development</span><i>✦</i><span>SEO/GEO</span><i>✦</i><span>AI Automations</span><i>✦</i><span>WordPress</span><i>✦</i><span>Shopify</span><i>✦</i><span>Webflow</span><i>✦</i><span>HubSpot</span><i>✦</i><span>Web Design</span><i>✦</i><span>Web Development</span><i>✦</i><span>SEO/GEO</span><i>✦</i><span>AI Automations</span><i>✦</i><span>WordPress</span><i>✦</i><span>Shopify</span><i>✦</i><span>Webflow</span><i>✦</i><span>HubSpot</span><i>✦</i></div></div>
+  </div>
+
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html#top" class="brand footer-logo" aria-label="Leizel Abana home">
+          <svg class="brand-mark" width="44" height="44" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="40" height="40" rx="11" fill="var(--green)"/>
+            <path d="M14.5 11V28.5H27.5" stroke="var(--cream-soft)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="27.5" cy="14" r="3.2" fill="var(--tan)"/>
+          </svg>
+          <span class="brand-text">
+            <span class="brand-name">Leizel Abana</span>
+            <span class="brand-role">Web Designer &amp; Developer</span>
+          </span>
+        </a>
+        <p class="footer-tagline">Building fast, good-looking websites that help businesses grow online.</p>
+        <span class="footer-status"><span class="status-dot" aria-hidden="true"></span>Available for new projects</span>
+      </div>
+
+      <nav class="footer-col" aria-label="Footer">
+        <h3 class="footer-heading">Explore</h3>
+        <ul>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="index.html#tools">Tools</a></li>
+          <li><a href="index.html#career">Career</a></li>
+          <li><a href="index.html#portfolio">Portfolio</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer-col">
+        <h3 class="footer-heading">Work Samples</h3>
+        <ul>
+          <li><a href="https://drive.google.com/drive/folders/156oaifrODIMy10VIKrs54-RyGDU5qyAB?usp=sharing" target="_blank" rel="noopener">Design Samples</a></li>
+          <li><a href="https://drive.google.com/drive/folders/1CIVgSRgw04p9UQrG7unXK8HfK-vQiAC9?usp=sharing" target="_blank" rel="noopener">Case Studies</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-cta">
+        <h3 class="footer-heading">Have a project in mind?</h3>
+        <a href="mailto:leizelbana@gmail.com" class="footer-email">leizelbana@gmail.com</a>
+        <a href="index.html#contact" class="btn btn-primary btn-small">Let's Talk</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> Leizel Abana. Designed &amp; built with care.</p>
+      <a href="#top" class="back-to-top" aria-label="Back to top">
+        <span>Back to top</span>
+        <span class="back-to-top-icon" aria-hidden="true">&uarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer-wordmark" aria-hidden="true"><span>Leizel Abana</span></div>
 </footer>
 
 <a href="mailto:leizelbana@gmail.com" class="email-fab" id="email-fab" aria-label="Email Leizel Abana">

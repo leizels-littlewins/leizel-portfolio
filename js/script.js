@@ -198,24 +198,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const items = [...roadmap.querySelectorAll('.roadmap-item')];
     const ROADMAP_BREAKPOINT = 700; // matches the CSS breakpoint that swaps to a straight line
     let pathLength = 0;
+    let points = [];
+    let pointLengths = [];
+
+    // Length along the path at which it reaches height y (y only ever increases).
+    const lengthAtY = (y) => {
+      let lo = 0;
+      let hi = pathLength;
+      for (let i = 0; i < 24; i += 1) {
+        const mid = (lo + hi) / 2;
+        if (path.getPointAtLength(mid).y < y) lo = mid; else hi = mid;
+      }
+      return hi;
+    };
 
     const buildPath = () => {
       if (!svg || !path || !items.length) return;
-      if (window.innerWidth <= ROADMAP_BREAKPOINT) return; // mobile uses the plain CSS line instead
 
-      const gutter = 80;
-      const roadmapRect = roadmap.getBoundingClientRect();
       const totalHeight = roadmap.offsetHeight;
       if (!totalHeight) return;
 
-      svg.setAttribute('viewBox', `0 0 ${gutter} ${totalHeight}`);
-
-      const points = items.map((item) => {
-        const itemRect = item.getBoundingClientRect();
-        const centerY = (itemRect.top - roadmapRect.top) + itemRect.height / 2;
-        const x = item.classList.contains('roadmap-left') ? 0 : gutter;
-        return { x, y: centerY };
+      // Layout positions (offsetTop) ignore the cards' slide-in transform, so
+      // the line always meets the dots exactly, even before they've animated in.
+      // x comes from the dots themselves, so the line passes through their centres.
+      const svgLeft = svg.getBoundingClientRect().left;
+      points = items.map((item) => {
+        const dot = item.querySelector('.roadmap-dot');
+        const dotRect = dot ? dot.getBoundingClientRect() : null;
+        return {
+          x: dotRect ? dotRect.left + dotRect.width / 2 - svgLeft : (item.classList.contains('roadmap-left') ? 0 : 80),
+          y: item.offsetTop + item.offsetHeight / 2,
+        };
       });
+
+      // Mobile's straight CSS line runs from the first dot to the last, no further.
+      roadmap.style.setProperty('--line-top', `${points[0].y}px`);
+      roadmap.style.setProperty('--line-bottom', `${totalHeight - points[points.length - 1].y}px`);
+
+      if (window.innerWidth <= ROADMAP_BREAKPOINT) return; // mobile uses the plain CSS line instead
+
+      const gutter = 80;
+      svg.setAttribute('viewBox', `0 0 ${gutter} ${totalHeight}`);
 
       let d = `M${points[0].x},${points[0].y}`;
       for (let i = 1; i < points.length; i += 1) {
@@ -227,27 +250,31 @@ document.addEventListener('DOMContentLoaded', () => {
       path.setAttribute('d', d);
 
       pathLength = path.getTotalLength();
+      pointLengths = points.map((p, i) => {
+        if (i === 0) return 0;
+        if (i === points.length - 1) return pathLength;
+        return lengthAtY(p.y);
+      });
       path.style.strokeDasharray = String(pathLength);
       path.classList.add('ready');
       updateRoadmapProgress();
     };
 
+    // The line grows dot-to-dot: it always stops exactly on the last lit dot
+    // rather than ending mid-air at an arbitrary scroll position.
     const updateRoadmapProgress = () => {
       if (!path || window.innerWidth <= ROADMAP_BREAKPOINT || !pathLength) return;
 
       const rect = roadmap.getBoundingClientRect();
-      const vh = window.innerHeight;
-      let progress = (vh - rect.top) / (rect.height + vh);
-      progress = Math.max(0, Math.min(1, progress));
+      const readingLine = window.innerHeight * 0.65 - rect.top;
+      let lastLit = -1;
+      points.forEach((p, i) => { if (p.y <= readingLine) lastLit = i; });
 
-      path.style.strokeDashoffset = String(pathLength * (1 - progress));
+      path.style.strokeDashoffset = String(lastLit < 0 ? pathLength : pathLength - pointLengths[lastLit]);
 
-      items.forEach((item) => {
+      items.forEach((item, i) => {
         const dot = item.querySelector('.roadmap-dot');
-        if (!dot) return;
-        const itemRect = item.getBoundingClientRect();
-        const itemFraction = ((itemRect.top - rect.top) + itemRect.height / 2) / rect.height;
-        dot.classList.toggle('lit', progress >= itemFraction - 0.02);
+        if (dot) dot.classList.toggle('lit', i <= lastLit);
       });
     };
 
@@ -282,13 +309,18 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   if (parallaxLayers.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Capped so shapes never slide past their section's edge and get sliced.
+    const MAX_SHIFT = 40;
     const updateParallax = () => {
       const vh = window.innerHeight;
       parallaxLayers.forEach(({ el, speed }) => {
-        const rect = el.getBoundingClientRect();
+        // Measure the section, not the layer itself, so the layer's own
+        // transform doesn't feed back into the next calculation.
+        const rect = el.parentElement.getBoundingClientRect();
         if (rect.bottom < -200 || rect.top > vh + 200) return; // skip offscreen layers
         const centerDelta = (rect.top + rect.height / 2) - vh / 2;
-        el.style.transform = `translateY(${(centerDelta * speed).toFixed(1)}px)`;
+        const shift = Math.max(-MAX_SHIFT, Math.min(MAX_SHIFT, centerDelta * speed));
+        el.style.transform = `translateY(${shift.toFixed(1)}px)`;
       });
     };
 

@@ -266,6 +266,7 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
   text-align: center;
   padding: 18px;
 }
+.hero-logo-circle svg { flex-shrink: 0; }
 
 .orbit-badge {
   position: absolute;
@@ -305,6 +306,7 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
 @media (max-width: 480px) {
   .hero-orbit { width: 280px; height: 280px; }
   .hero-logo-circle { inset: 54px; padding: 12px; }
+  .hero-logo-circle svg { width: 52px; height: 52px; }
   .orbit-badge { font-size: 0.72rem; padding: 7px 12px; }
   .orbit-badge.badge-1 { left: -10px; }
   .orbit-badge.badge-2 { right: -10px; }
@@ -343,9 +345,9 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
 
 .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
 
-.squiggle { position: absolute; opacity: 0.75; pointer-events: none; z-index: 0; }
+.squiggle { position: absolute; opacity: 0.75; pointer-events: none; z-index: 0; overflow: visible; }
 .squiggle-1 { top: 30px; right: 3%; }
-.squiggle-2 { bottom: 10px; left: 3%; }
+.squiggle-2 { bottom: 80px; left: 3%; }
 .squiggle-3 { top: 10%; left: 1%; }
 .squiggle-4 { bottom: 5%; right: 2%; }
 
@@ -365,7 +367,8 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
 
 .floaties {
   position: absolute;
-  inset: 0;
+  /* inset from the section edges so drifting shapes never get sliced */
+  inset: 64px 0;
   pointer-events: none;
   z-index: 0;
 }
@@ -421,13 +424,6 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
   font-size: 3rem;
   filter: saturate(1.1) drop-shadow(0 6px 14px rgba(58, 58, 58, 0.12));
 }
-.floaty.line-shape {
-  width: 100px;
-  height: 6px;
-  border-radius: 6px;
-  background: linear-gradient(90deg, var(--green), transparent);
-}
-.floaty.line-shape.tan { background: linear-gradient(90deg, var(--tan), transparent); }
 
 /* content sits above the ambient floaties / blobs / waves layers */
 .container { position: relative; z-index: 1; }
@@ -443,6 +439,9 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
   position: absolute;
   inset: 0;
   overflow: hidden;
+  /* fade out near section edges so blobs never leave a hard seam */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 140px, #000 calc(100% - 140px), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 140px, #000 calc(100% - 140px), transparent);
   pointer-events: none;
   z-index: 0;
 }
@@ -627,7 +626,7 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
 }
 .roadmap-line path {
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease, stroke-dashoffset 0.7s ease;
 }
 .roadmap-line path.ready { opacity: 1; }
 
@@ -654,8 +653,9 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
   z-index: 2;
   transition: box-shadow 0.35s ease, transform 0.35s ease;
 }
-.roadmap-left .roadmap-dot { right: -40px; }
-.roadmap-right .roadmap-dot { left: -40px; }
+/* dot centres sit 24px either side of the middle; the connector is drawn through them */
+.roadmap-left .roadmap-dot { right: -27px; }
+.roadmap-right .roadmap-dot { left: -27px; }
 .roadmap-dot.lit {
   transform: translateY(-50%) scale(1.2);
   box-shadow: 0 0 0 2px var(--dot-color, var(--green)),
@@ -701,9 +701,9 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
   .roadmap::before {
     content: "";
     position: absolute;
-    left: 11px;
-    top: 6px;
-    bottom: 6px;
+    left: 9.5px; /* centres the 3px line on the 22px dots */
+    top: var(--line-top, 6px);
+    bottom: var(--line-bottom, 6px);
     border-left: 3px dashed var(--tan);
   }
   .roadmap-item,
@@ -722,6 +722,7 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
 
 @media (max-width: 480px) {
   .roadmap { padding-left: 36px; }
+  .roadmap::before { left: 7.5px; }
   .roadmap-left .roadmap-dot,
   .roadmap-right .roadmap-dot { left: -36px; width: 18px; height: 18px; }
   .roadmap .timeline-content { padding: 16px 20px; }
@@ -986,11 +987,303 @@ section { padding: 96px 0; position: relative; overflow: hidden; }
 /* ==========================================================================
    Footer
    ========================================================================== */
-.site-footer { background: var(--charcoal); color: rgba(255,255,255,0.7); padding: 28px 0; }
-.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-.footer-inner p { color: rgba(255,255,255,0.6); margin: 0; font-size: 0.9rem; }
-.back-to-top { font-size: 0.9rem; font-weight: 700; color: var(--tan); }
+.site-footer {
+  position: relative;
+  background: var(--charcoal);
+  color: rgba(255,255,255,0.7);
+  padding: 20px 0 0;
+}
+
+/* Curved seam that rises out of the section above */
+.footer-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 56px;
+  transform: translateY(calc(-100% + 2px));
+  display: block;
+  pointer-events: none;
+}
+/* Soft green glow, clipped to the footer so it never causes side-scroll */
+.footer-glow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.footer-glow::before {
+  content: "";
+  position: absolute;
+  width: 460px;
+  height: 460px;
+  right: -140px;
+  top: -160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--green-rgb), 0.22), transparent 70%);
+}
+
+.footer-top {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 0.9fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 48px;
+}
+
+.footer-logo .brand-name { color: var(--cream-soft); }
+.footer-tagline { color: rgba(255,255,255,0.6); font-size: 0.95rem; max-width: 300px; margin: 18px 0 20px; }
+
+.footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(var(--green-rgb), 0.14);
+  border: 1px solid rgba(var(--green-rgb), 0.35);
+  color: var(--cream-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4fd1a1;
+  box-shadow: 0 0 0 0 rgba(79, 209, 161, 0.6);
+  animation: statusPulse 2.2s ease-out infinite;
+}
+@keyframes statusPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(79, 209, 161, 0.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(79, 209, 161, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(79, 209, 161, 0); }
+}
+
+.footer-heading {
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tan);
+  margin: 6px 0 18px;
+}
+.footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.footer-col a {
+  position: relative;
+  color: rgba(255,255,255,0.75);
+  font-weight: 600;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+.footer-col a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--green);
+  transition: width 0.2s ease;
+}
+.footer-col a:hover { color: var(--white); padding-left: 16px; }
+.footer-col a:hover::before { width: 10px; }
+
+.footer-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.footer-cta .footer-heading {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cream-soft);
+  margin: 0;
+}
+.footer-email {
+  color: var(--tan);
+  font-weight: 700;
+  border-bottom: 2px solid rgba(var(--tan-rgb), 0.35);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.footer-email:hover { color: var(--tan-soft); border-color: var(--tan); }
+
+.footer-bottom {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 22px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.footer-bottom p { color: rgba(255,255,255,0.5); margin: 0; font-size: 0.88rem; }
+
+.back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  transition: color 0.2s ease;
+}
+.back-to-top-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--tan);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
 .back-to-top:hover { color: var(--white); }
+.back-to-top:hover .back-to-top-icon {
+  transform: translateY(-3px);
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--white);
+}
+
+@media (max-width: 900px) {
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .footer-brand, .footer-cta { grid-column: 1 / -1; }
+}
+/* ---------- Crossed scrolling ribbons ---------- */
+.footer-ribbons {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  overflow: hidden;
+  padding: 34px 0;
+  margin-bottom: 40px;
+}
+.ribbon {
+  grid-area: 1 / 1;
+  margin: 0 -4%;
+  padding: 14px 0;
+  overflow: hidden;
+}
+.ribbon-front {
+  background: var(--green);
+  transform: rotate(-2deg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.ribbon-back {
+  background: var(--tan);
+  transform: rotate(2deg);
+  opacity: 0.9;
+}
+.ribbon-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: metricsScroll 38s linear infinite;
+}
+.ribbon-back .ribbon-track { animation-direction: reverse; animation-duration: 46s; }
+.ribbon-track span {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0 22px;
+}
+.ribbon-track i { font-style: normal; font-size: 0.95rem; }
+.ribbon-front span { color: var(--cream-soft); }
+.ribbon-front i { color: var(--tan); }
+.ribbon-back span { color: var(--charcoal); }
+.ribbon-back i { color: var(--white); }
+
+/* ---------- Spinning "let's work together" sticker ---------- */
+.footer-sticker {
+  position: absolute;
+  z-index: 3;
+  right: 7%;
+  top: -64px;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  background: var(--cream-soft);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  display: grid;
+  place-items: center;
+  transition: transform 0.3s ease;
+}
+.footer-sticker:hover { transform: scale(1.08) rotate(-6deg); }
+.sticker-text {
+  position: absolute;
+  inset: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  animation: spin 14s linear infinite;
+}
+.sticker-text text {
+  fill: var(--charcoal);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+}
+.sticker-arrow {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--white);
+  font-size: 1.4rem;
+  font-weight: 800;
+  transition: background 0.2s ease, transform 0.3s ease;
+}
+.footer-sticker:hover .sticker-arrow { background: var(--green-dark); transform: rotate(45deg); }
+
+/* ---------- Floaties on dark ---------- */
+.footer-floaties { overflow: hidden; }
+.footer-floaties .floaty { opacity: 0.35; filter: none; }
+
+/* ---------- Oversized wordmark peeking from the bottom ---------- */
+.footer-wordmark {
+  position: relative;
+  overflow: hidden;
+  padding: 0 0 0.12em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3.2rem, 14vw, 13rem);
+  line-height: 0.95;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+.footer-wordmark span {
+  display: block;
+  background: linear-gradient(180deg, rgba(var(--green-rgb), 0.5) 0%, rgba(var(--green-rgb), 0.06) 75%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ribbon-track, .sticker-text, .footer-floaties .floaty, .status-dot { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .footer-sticker { width: 96px; height: 96px; top: -52px; right: 16px; }
+  .sticker-arrow { width: 36px; height: 36px; font-size: 1.1rem; }
+  .ribbon-track span { font-size: 0.95rem; padding: 0 16px; }
+  .footer-ribbons { padding: 26px 0; margin-bottom: 28px; }
+}
+
+@media (max-width: 480px) {
+  .site-footer { padding-top: 12px; }
+  .footer-top { gap: 32px; }
+  .footer-bottom { flex-direction: column-reverse; align-items: flex-start; }
+  .site-footer { padding-bottom: 72px; }
+}
 
 /* ==========================================================================
    Scroll-reveal animation
